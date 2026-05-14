@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Github, Mail } from 'lucide-react';
+import { Mail } from 'lucide-react';
 
 const keywords = ['产品设计', 'AI 协作', '独立开发', '数据驱动'];
 
@@ -48,7 +48,7 @@ export function HeroSection({ onOpenContact }: HeroSectionProps) {
             transition={{ duration: 0.5, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
             曾在腾讯、星辉做了 5 年游戏系统策划，主导过龙石战争、战国野望等项目的核心系统从 0 到 1
-            落地。现在借助 AI 工具，一个人完成从产品设计、交互体验到前后端开发的完整闭环。无论是项目合作还是工作机会，欢迎联系。
+            落地。现在借助 AI 工具，一个人完成从产品设计、交互体验到前后端开发的完整闭环。
           </motion.p>
 
           {/* Keywords */}
@@ -75,15 +75,6 @@ export function HeroSection({ onOpenContact }: HeroSectionProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
           >
-            <a
-              href="https://github.com/ingozhou66"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="ghost-btn text-xs py-2 px-3"
-            >
-              <Github className="w-3.5 h-3.5" />
-              GitHub
-            </a>
             {onOpenContact && (
               <button
                 onClick={onOpenContact}

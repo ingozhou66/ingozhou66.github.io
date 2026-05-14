@@ -1,4 +1,4 @@
-import { Github, ArrowUp, MessageSquare } from 'lucide-react';
+import { Github, ArrowUp, MessageSquare, Mail } from 'lucide-react';
 
 const navLinks = [
   { id: 'projects', label: '项目' },
@@ -52,10 +52,10 @@ export function FooterSection() {
             </div>
           </div>
 
-          {/* Right: Links */}
+          {/* Right: Contact */}
           <div>
             <h4 className="text-sm font-semibold text-txt-primary mb-4">
-              链接
+              联系方式
             </h4>
             <div className="flex flex-col gap-2">
               <a
@@ -69,7 +69,11 @@ export function FooterSection() {
               </a>
               <span className="inline-flex items-center gap-2 text-sm text-txt-secondary w-fit">
                 <MessageSquare className="w-4 h-4 text-txt-muted" />
-                微信：inherentid（加好友请备注来源）
+                微信：inherentid
+              </span>
+              <span className="inline-flex items-center gap-2 text-sm text-txt-secondary w-fit">
+                <Mail className="w-4 h-4 text-txt-muted" />
+                ingozhou@gmail.com
               </span>
             </div>
           </div>

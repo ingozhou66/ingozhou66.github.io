@@ -6,7 +6,11 @@ const navItems = [
   { id: 'tech-stack', label: '技术栈' },
 ];
 
-export function Navigation() {
+interface NavigationProps {
+  onOpenContact?: () => void;
+}
+
+export function Navigation({ onOpenContact }: NavigationProps) {
   const { scrollY, activeSection } = useScrollPosition();
   const isScrolled = scrollY > 100;
 
@@ -53,6 +57,16 @@ export function Navigation() {
                 )}
               </button>
             ))}
+
+            {/* Contact button */}
+            {onOpenContact && (
+              <button
+                onClick={onOpenContact}
+                className="ml-2 px-4 py-2 text-sm font-medium text-gold border border-gold/30 rounded-lg hover:bg-gold/10 transition-colors"
+              >
+                联系我
+              </button>
+            )}
           </div>
         </div>
       </div>

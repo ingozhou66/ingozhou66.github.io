@@ -1,9 +1,13 @@
 import { motion } from 'framer-motion';
-import { Github, MessageSquare } from 'lucide-react';
+import { Github, Mail } from 'lucide-react';
 
 const keywords = ['产品设计', 'AI 协作', '独立开发', '数据驱动'];
 
-export function HeroSection() {
+interface HeroSectionProps {
+  onOpenContact?: () => void;
+}
+
+export function HeroSection({ onOpenContact }: HeroSectionProps) {
   return (
     <section
       id="hero"
@@ -66,7 +70,7 @@ export function HeroSection() {
 
           {/* Contact */}
           <motion.div
-            className="mt-6 flex items-center gap-4"
+            className="mt-6 flex items-center gap-4 flex-wrap"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
@@ -80,10 +84,15 @@ export function HeroSection() {
               <Github className="w-3.5 h-3.5" />
               GitHub
             </a>
-            <span className="inline-flex items-center gap-2 text-sm text-txt-secondary">
-              <MessageSquare className="w-3.5 h-3.5 text-txt-muted" />
-              <span className="font-mono text-xs">微信：inherentid（加好友请备注来源）</span>
-            </span>
+            {onOpenContact && (
+              <button
+                onClick={onOpenContact}
+                className="gold-btn text-xs py-2 px-4"
+              >
+                <Mail className="w-3.5 h-3.5" />
+                联系我
+              </button>
+            )}
           </motion.div>
         </div>
       </div>

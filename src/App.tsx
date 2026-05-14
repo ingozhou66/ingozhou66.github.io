@@ -6,6 +6,7 @@ import { TechStackSection } from '@/sections/TechStackSection';
 import { FooterSection } from '@/sections/FooterSection';
 import { IframePreviewModal } from '@/components/IframePreviewModal';
 import { VideoGalleryModal } from '@/components/VideoGalleryModal';
+import { ContactModal } from '@/components/ContactModal';
 import { projects } from '@/data/projects';
 import type { Project } from '@/data/projects';
 
@@ -13,6 +14,7 @@ export default function App() {
   const [activeProject, setActiveProject] = useState<Project | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState<'iframe' | 'video' | null>(null);
+  const [contactOpen, setContactOpen] = useState(false);
 
   const handleSelectProject = useCallback((projectId: string) => {
     const project = projects.find((p) => p.id === projectId);
@@ -32,12 +34,20 @@ export default function App() {
     }, 400);
   }, []);
 
+  const handleOpenContact = useCallback(() => {
+    setContactOpen(true);
+  }, []);
+
+  const handleCloseContact = useCallback(() => {
+    setContactOpen(false);
+  }, []);
+
   return (
     <div className="min-h-screen bg-surface-primary">
-      <Navigation />
+      <Navigation onOpenContact={handleOpenContact} />
 
       <main>
-        <HeroSection />
+        <HeroSection onOpenContact={handleOpenContact} />
         <ProjectsGrid onSelectProject={handleSelectProject} />
         <TechStackSection />
         <FooterSection />
@@ -55,6 +65,12 @@ export default function App() {
         project={modalType === 'video' ? activeProject : null}
         open={modalOpen && modalType === 'video'}
         onClose={handleCloseModal}
+      />
+
+      {/* Contact Modal */}
+      <ContactModal
+        open={contactOpen}
+        onClose={handleCloseContact}
       />
     </div>
   );

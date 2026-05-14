@@ -15,74 +15,70 @@ const antiDebugScript = `
 }catch(e){}})();
 `;
 
-// Copyright watermark to embed in obfuscated code
-const copyrightWatermark = `
-// © 2025 ingozhou. All rights reserved.
-// Unauthorized commercial use is prohibited.
-// Source: github.com/ingozhou66
-`;
+const copyrightWatermark =
+  '© 2025 ingozhou. All rights reserved. Unauthorized commercial use is prohibited.';
 
 function obfuscateHtmlFile(filePath) {
   let html = fs.readFileSync(filePath, 'utf8');
   const originalSize = Buffer.byteLength(html, 'utf8');
 
-  // 1. Inject anti-debug script right after <head> tag
-  const headEndMatch = html.match(/<head[^>]*>/i);
-  if (headEndMatch) {
-    const headEndIndex = headEndMatch.index + headEndMatch[0].length;
-    html = html.slice(0, headEndIndex) + '\n<script>' + antiDebugScript + '</script>' + html.slice(headEndIndex);
+  // 1. Inject anti-debug after <head>
+  const headMatch = html.match(/<head[^>]*>/i);
+  if (headMatch) {
+    const idx = headMatch.index + headMatch[0].length;
+    html = html.slice(0, idx) + '\n<script>' + antiDebugScript + '</script>' + html.slice(idx);
   }
 
-  // 2. Add copyright comment at the very top (before DOCTYPE if possible, or right after)
+  // 2. Add copyright comment after DOCTYPE
   if (!html.includes('© 2025 ingozhou')) {
     const doctypeMatch = html.match(/<!DOCTYPE[^>]*>/i);
     if (doctypeMatch) {
-      const afterDoctype = doctypeMatch.index + doctypeMatch[0].length;
-      html = html.slice(0, afterDoctype) + '\n<!--\n  ' + copyrightWatermark.trim().replace(/\n/g, '\n  ') + '\n-->' + html.slice(afterDoctype);
+      const after = doctypeMatch.index + doctypeMatch[0].length;
+      html =
+        html.slice(0, after) +
+        '\n<!--\n  ' +
+        copyrightWatermark +
+        '\n  Source: github.com/ingozhou66\n-->' +
+        html.slice(after);
     }
   }
 
-  // 3. Obfuscate all inline <script> tags
+  // 3. Obfuscate inline <script> tags
   const scriptRegex = /<script\b[^>]*>([\s\S]*?)<\/script>/gi;
   let match;
   let lastIndex = 0;
   let result = '';
 
   while ((match = scriptRegex.exec(html)) !== null) {
-    // Append text before this script tag
     result += html.slice(lastIndex, match.index);
 
     const fullMatch = match[0];
     const jsCode = match[1];
 
-    // Skip empty or already-minified scripts (heuristic: very short)
     if (jsCode.trim().length < 50) {
       result += fullMatch;
       lastIndex = scriptRegex.lastIndex;
       continue;
     }
 
-    // Skip scripts with src attribute (external JS)
-    const hasSrc = /<script\b[^>]*\bsrc\s*=/.test(fullMatch.split('>')[0] + '>');
-    if (hasSrc) {
+    const tagOpen = fullMatch.substring(0, fullMatch.indexOf('>') + 1);
+    if (/\bsrc\s*=/.test(tagOpen)) {
       result += fullMatch;
       lastIndex = scriptRegex.lastIndex;
       continue;
     }
 
     try {
+      // Conservative obfuscation: avoid aggressive transforms that break code
       const obfuscated = JavaScriptObfuscator.obfuscate(jsCode, {
         compact: true,
-        controlFlowFlattening: true,
-        controlFlowFlatteningThreshold: 0.7,
-        deadCodeInjection: true,
-        deadCodeInjectionThreshold: 0.3,
-        debugProtection: true,
-        debugProtectionInterval: 2000,
+        controlFlowFlattening: false,
+        deadCodeInjection: false,
+        debugProtection: false,
         disableConsoleOutput: true,
         identifierNamesGenerator: 'hexadecimal',
         rotateStringArray: true,
-        selfDefending: true,
+        selfDefending: false,
         stringArray: true,
         stringArrayEncoding: ['base64'],
         stringArrayThreshold: 0.75,
@@ -90,23 +86,26 @@ function obfuscateHtmlFile(filePath) {
         unicodeEscapeSequence: false,
       }).getObfuscatedCode();
 
-      result += fullMatch.replace(jsCode, '\n' + obfuscated + '\n');
+      // FIX: use indexOf/slice instead of .replace() which misinterprets $ in replacement
+      const codeStart = fullMatch.indexOf(jsCode);
+      const beforeCode = fullMatch.substring(0, codeStart);
+      const afterCode = fullMatch.substring(codeStart + jsCode.length);
+      result += beforeCode + '\n' + obfuscated + '\n' + afterCode;
     } catch (err) {
-      console.warn(`Warning: Could not obfuscate script in ${filePath}: ${err.message}`);
+      console.warn(`Warning: could not obfuscate script in ${path.basename(filePath)}: ${err.message}`);
       result += fullMatch;
     }
 
     lastIndex = scriptRegex.lastIndex;
   }
 
-  // Append remaining text after last script
   result += html.slice(lastIndex);
-
   fs.writeFileSync(filePath, result);
 
   const newSize = Buffer.byteLength(result, 'utf8');
-  const ratio = ((newSize / originalSize) * 100).toFixed(1);
-  console.log(`✓ Protected: ${path.basename(filePath)} (${(originalSize/1024).toFixed(1)}KB → ${(newSize/1024).toFixed(1)}KB, ${ratio}%)`);
+  console.log(
+    `✓ Protected: ${path.basename(filePath)} (${(originalSize / 1024).toFixed(1)}KB → ${(newSize / 1024).toFixed(1)}KB, ${((newSize / originalSize) * 100).toFixed(1)}%)`
+  );
 }
 
 const files = [

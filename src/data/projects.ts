@@ -83,7 +83,7 @@ export const projects: Project[] = [
   {
     id: 'mcn-hub',
     title: 'MCN达人合作平台',
-    shortDescription: 'React 19 全栈 MCN 达人管理平台，覆盖发掘、合作、营销、分析全流程',
+    shortDescription: 'MCN 机构的达人管理后台。从发掘达人、建立合作到邮件营销、数据分析一站式搞定。',
     fullDescription: '面向 MCN 机构的达人管理全流程 SaaS 平台。包含潜在达人库、合作达人库、达人数据挖掘、Excel 导入导出、邮件营销、活动管理与达人-活动智能匹配推荐、数据分析看板、AI 对话等模块。全栈 TypeScript（React 19 + tRPC + Drizzle ORM），前后端类型安全，支持打包为 Windows 独立 exe 降低客户部署成本。四个项目中复杂度最高，体现从零定义 SaaS 产品架构的能力。全程与 AI 协作独立开发。',
     type: 'video',
     thumbnail: '/thumbnails/project-4.jpg',
